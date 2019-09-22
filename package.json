@@ -1,0 +1,30 @@
+{
+  "name": "js",
+  "quokka": {
+    "babel": true
+  },
+  "version": "1.0.0",
+  "description": "",
+  "main": "order-total.js",
+  "dependencies": {
+    "jest": "^24.9.0",
+    "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {
+    "jasmine": "^3.5.0"
+  },
+  "scripts": {
+    "test": "jest",
+    "watch": "jest --watch *.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RoxanneG93/JS-Testing.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RoxanneG93/JS-Testing/issues"
+  },
+  "homepage": "https://github.com/RoxanneG93/JS-Testing#readme"
+}
