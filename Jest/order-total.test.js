@@ -4,26 +4,48 @@
 // })
 const orderTotal = require('./order-total');
 
-const emptyFunction = () => {
 
-}
 
 //GET https://api.exchangeratesapi.io/latest?base=USD 
-it('calls api if country code specified', () => {
+it('calls api if country code specified', (url, opts) => {
+
+    const fakeProcess = {
+        env: {
+            API_KEY: 'key123'
+        }
+    }
 
     //defining a api call simulation and pass the variable to orderTotal function
     let isFakeFetchCalled = false;
+
     const fakeFetch = (url) => {
+        // if headers with apikey are required
+        /*{
+            headers: {
+                'apikey': process.env.API_KEY
+            }
+        } */
+        //expect(opts.headers.apikey).toBe('key123')
         expect(url).toBe('https://api.exchangeratesapi.io/latest?base=USD')
-        isFakeFetchedCalled = true;
+        isFakeFetchCalled = true;
+
+        return Promise.resolve({
+            //data.rates.USD
+            json: () => Promise.resolve({
+                rates: {
+                    USD: 1.0
+                }
+            })
+        })
     }
-    orderTotal(fakeFetch, {
+    // return the promise
+    return orderTotal(fakeFetch, {
         country: 'USD',
         items: [
             { name: 'Dragon waffles', price: 20, quantity: 2 }
         ]
     }).then(result => {
-        //
+        expect(result).toBe(20 * 2 * 1.0)
         expect(isFakeFetchCalled).toBe(true);
     })
 })
@@ -34,24 +56,27 @@ it('calls api if country code specified', () => {
 
 
 
-
+// Testing for Quantity Specified
 it('Quantity', () =>
-    orderTotal(emptyFunction, {
+    orderTotal(null, {
         items: [
             { name: 'Dragon candy', price: 2, quantity: 3 }
         ]
     }).then(result => expect(result).toBe(6)))
 
+// Testing  for NO Quantity Specified
 it('No quantity specified', () =>
-    orderTotal(emptyFunction, {
+    orderTotal(null, {
         items: [
             { name: 'Dragon candy', price: 3 }
         ]
     }).then(result => expect(result).toBe(3)))
 
 
+
+// Testing Order Total with multiple line items, some with quantity, some not specified qty
 it('Happy Path (Example 1)', () =>
-    orderTotal(emptyFunction, {
+    orderTotal(null, {
         items: [
             { name: 'Dragon food', price: 8, quantity: 1 },
             { name: 'Dragon cage (small)', price: 800 }
@@ -59,8 +84,9 @@ it('Happy Path (Example 1)', () =>
     }).then(result => expect(result).toBe(808)))
 
 
+// Testing Order Total with multiline items and both have qty
 it('Happy Path (Example 2)', () =>
-    orderTotal(emptyFunction, {
+    orderTotal(null, {
         items: [
             { name: 'Dragon collar', price: 20, quantity: 1 },
             { name: 'Dragon chew toy', price: 40, quantity: 1 }
@@ -68,6 +94,9 @@ it('Happy Path (Example 2)', () =>
     }).then(result => expect(result).toBe(60)))
 
 
+
+
+// ===== Testing Example using IF Statment =======
 // if (orderTotal({
 //     items: [
 //         { name: 'Dragon candy', price: 2, quantity: 3 }
